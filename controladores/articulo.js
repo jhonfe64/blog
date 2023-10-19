@@ -66,11 +66,36 @@ const listar = async (req, res) => {
     status: "success",
     articulos: articulos
   })
-
 }
+
+const uno = async (req, res)=> {
+  //recoger un id por la url
+  const {id} = req.params
+  Articulo.findById(id).exec()
+  .then((data)=>{
+    if(data){
+      return res.status(200).json({
+        status: "success",
+        articulo: data
+      })
+    }else{
+      return res.status(400).json({
+        status: "not found",
+        message: "Articulo no encontrado"
+      })
+    }
+  }).catch((error)=>{
+    return res.status(400).json({
+      status: "Error",
+      message: "No se ha encontrado el articulo " + error.message
+    });
+  })
+}
+
 
 
 module.exports = {
     crear,
-    listar
+    listar,
+    uno
 }
