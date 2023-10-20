@@ -48,8 +48,6 @@ const crear = (req, res) => {
   });
 }
 
-
-
 const listar = async (req, res) => {
   const {cantidad} = req.params
   //del mas nuevgo al mas viejo (todos los registros)
@@ -93,9 +91,60 @@ const uno = async (req, res)=> {
 }
 
 
+const eliminar = async (req, res) => {
+  
+ const {id} = req.params
+ try {
+  const articuloremovido = await Articulo.deleteOne({_id: id}).exec()
+  if(articuloremovido.deletedCount > 0){
+    return res.status(200).json({
+        status: "success",
+        message: "Se ha eliminado el articulo correctamente"
+    })
+  }else{
+    return res.status(404).json({
+      status: "not found",
+      message: "No se ha encontradio el articulo"
+    })
+  }
+ } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      message: "No se ha podido eliminar el articulo"
+    })
+ }
+}
+
+const actualizar = async (req, res) => {
+  const {id} = req.params
+  const body = req.body
+  
+  try {
+    const articuloEditado = await Articulo.findOneAndUpdate({_id: id}, body, {new: true})
+    if(articuloEditado){
+        return res.status(200).json({
+          status: "Success",
+          message: "Se ha actualizado el articulo"
+        })
+    }else{
+      return res.status(404).json({
+        status: "Not found",
+        message: "No se encontro el articulo"
+      })
+    }
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      message: "No se puede actualizar el articulo" + error.message
+    })
+  }
+}
+
 
 module.exports = {
     crear,
     listar,
-    uno
+    uno,
+    eliminar,
+    actualizar
 }
